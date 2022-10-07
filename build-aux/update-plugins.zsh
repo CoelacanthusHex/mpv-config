@@ -17,7 +17,7 @@ mv -t $1/scripts "$TMP"/*
 fonts=('modernx-osc-icon.ttf')
 
 for font in $fonts; do
-	curl -L -o "$TMP/$font" "https://github.com/dexeonify/mpv-config/raw/main/scripts/$font"
+	curl -L -o "$TMP/$font" "https://github.com/dexeonify/mpv-config/raw/main/fonts/$font"
 done
 
 mv -t $1/fonts "$TMP"/*
