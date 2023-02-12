@@ -6,7 +6,7 @@ from vapoursynth import core
 colorlv = video_in.get_frame(0).props._ColorRange
 
 # 场景切换的检测阈值，初始设置保守，设置为 0.2 可获得更明显的效果但引入更多瑕疵
-scene_th = 0.1
+scene_th = 0.15
 # 使用的显卡序号，0为排序一号
 GPU = 0
 # 使用的显卡线程数
@@ -22,17 +22,9 @@ if container_fps > 58:
 
 prepare = core.misc.SCDetect(clip=video_in, threshold=scene_th)
 
-cut = prepare.resize.Bilinear(format=vs.RGBS, matrix_in_s="709")
-cut = core.rife.RIFE(clip=cut,
-                     model=9,
-                     factor_num=FPS_num,
-                     factor_den=FPS_den,
-                     gpu_id=GPU,
-                     gpu_thread=GPU_t,
-                     sc=True,
-                     skip=True,
-                     skip_threshold=60.0)
+cut1 = core.resize.Bilinear(clip=prepare, format=vs.RGBS, matrix_in_s="709")
+cut2 = core.rife.RIFE(clip=cut1, model=9, factor_num=FPS_num, factor_den=FPS_den, gpu_id=GPU, gpu_thread=GPU_t, sc=True, skip=True, skip_threshold=60.0)
 
-output = cut.resize.Bilinear(format=video_in.format.id, matrix_s="709", range=1 if colorlv == 0 else None)
+output = core.resize.Bilinear(clip=cut2, format=fmt_in, matrix_s="709", range=1 if colorlv==0 else None)
 
 output.set_output()

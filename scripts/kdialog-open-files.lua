@@ -1,35 +1,43 @@
+-- This is free and unencumbered software released into the public domain.
+-- The software is provided "as is", without warranty of any kind.
+-- Anyone is free to copy, modify, publish, use, compile, sell, or
+-- distribute this software, either in source code form or as a compiled
+-- binary, for any purpose, commercial or non-commercial, and by any means.
+-- For more information, please refer to <http://unlicense.org/>
 --
--- Use KDE's KDialog to add files to playlist, subtitles to playing video or open URLs.
--- Based on 'mpv-open-file-dialog'(https://github.com/rossy/mpv-open-file-dialog).
+-- Use KDE KDialog to add files to playlist, subtitles to playing video or open URLs.
+-- Based on 'mpv-open-file-dialog' <https://github.com/rossy/mpv-open-file-dialog>.
 --
 -- Default keybindings:
---      Ctrl+f: Add files to the playlist and replace the current playlist.
---      Ctrl+Shift+f: Append files to the playlist.
+--      Ctrl+o: Add files to the playlist and replace the current playlist.
+--      Ctrl+Shift+o: Append files to the playlist.
 --      Ctrl+s: Load a subtitle file.
---      Ctrl+u: Load an URL.
+--      Ctrl+u: Load a URL.
 --
 
 utils = require 'mp.utils'
 
-function select_files_kdialog()
-    local focus = utils.subprocess({
-        args = {'xdotool', 'getwindowfocus'}
-    })
+sub_extensions = " *.srt *.sub *.ass *.ssa *.mplsub *.txt "
+video_extensions = " *.3ga *.3gp *.3gpp *.3g2 *.3gp2 *.3gpp2 *.avx *.dv *.m2t *.m2ts *.mpl *.mpls *.mts *.ts *.f4v *.m4v *.mp4 *.mp2 *.mpe *.mpeg *.mpg *.vob *.ogv *.moov *.mov *.qtvr *.m1u *.m4u *.mxu *.rv *.rvx *.webm *.flc *.fli *.flv *.fxm *.mkv *.mk3d *.mng *.wmp *.wmv *.asf *.avi *.divx *.nsv *.ogm *.swf *.rmvb *.real "
+audio_extensions = " *.amr *.aac *.ac3 *.flac *.mp2 *.f4a *.m4a *.mp3 *.mpga *.oga *.ogg *.opus *.dts *.dtshd *.ra *.rax *.webm *.pcm *.ape *.f4b *.m4b *.mka *.m3u *.m3u8 *.asx *.wax *.wmx *.wvx *.wma *.mpc *.mp+ *.pls *.spx *.tta *.voc *.wav *.wv *.wvp *.xmf *.cue "
+
+function select_files()
+    local focus = utils.subprocess({ args = {'xdotool', 'getwindowfocus'} })
     
-    if mp.get_property("path") == nill then
+    if mp.get_property("path") == nil then
         directory = ""
     else
         directory = utils.split_path(utils.join_path(mp.get_property("working-directory"), mp.get_property("path")))
     end
         
      file_select = utils.subprocess({
-        args = {'kdialog', '--attach='..focus.stdout..'' , '--title=Select Files', '--icon=mpv', '--multiple', '--separate-output', '--getopenfilename', ''..directory..'', 'Multimedia Files (*.3ga *.egp *.3gpp *.3g2 *.3gp2 *.egpp2 *.m4v *.f4v *.mp2 *.mpeg *.vob *.ogv *.mov *.moov *.qtrv *.tv *.rvx *.webm *.flv *.mkv *.wmp *.wmv *.avi *.avf *.divx *.ogm *.mp4 *.aac *.ac3 *.flac *.mp2 *.mp3 *.m4a *.ogg *.oga *.ra *.rax *.webm *.ape *.mka *.m3u *.m3u8 *.vlc *.wma *.opus *.real *.pls *.tta *.wav)'},
+        args = {'kdialog', '--attach='..focus.stdout..'' , '--title=Select Files', '--icon=mpv', '--geometry=750x450', '--multiple', '--separate-output', '--getopenfilename', ''..directory..'', 'Multimedia Files  ('..video_extensions.. audio_extensions..') | Video Files ('..video_extensions..') | Audio Files ('..audio_extensions..') | All Files (*)'},
         cancellable = false,
     })
 end
     
 function add_files()
-    select_files_kdialog()
+    select_files()
     if (file_select.status ~= 0) then return end
     
     local first_file = true
@@ -41,7 +49,7 @@ end
     
 function append_files()
     local playlist_items = 0
-    select_files_kdialog()
+    select_files()
     if (file_select.status ~= 0) then return end
     
     for filename in string.gmatch(file_select.stdout, '[^\n]+') do
@@ -56,12 +64,10 @@ function append_files()
 end
 
 
-function open_url_kdialog()
-    local focus = utils.subprocess({
-        args = {'xdotool', 'getwindowfocus'}
-    })
+function open_url()
+    local focus = utils.subprocess({ args = {'xdotool', 'getwindowfocus'} })
     local url_select = utils.subprocess({
-        args = {'kdialog', '--attach='..focus.stdout..'' , '--title=Open URL', '--icon=mpv', '--inputbox', 'Enter URL:'},
+        args = {'kdialog', '--attach='..focus.stdout..'' , '--title=Open URL', '--icon=mpv', '--inputbox', 'Enter URL:', '--geometry=460'},
         cancellable = false,
     })
     
@@ -72,19 +78,17 @@ function open_url_kdialog()
     end
 end
 
-function add_sub_kdialog()
-    local focus = utils.subprocess({
-        args = {'xdotool', 'getwindowfocus'}
-    })
+function add_subtitle()
+    local focus = utils.subprocess({ args = {'xdotool', 'getwindowfocus'} })
     
-    if mp.get_property("path") == nill then
+    if mp.get_property("path") == nil then
 		directory = ""
 	else
 		directory = utils.split_path(utils.join_path(mp.get_property("working-directory"), mp.get_property("path")))
 	end
     
     local sub_select = utils.subprocess({
-        args = {'kdialog', '--attach='..focus.stdout..'' , '--title=Select Subtitle', ''..directory..'', '--icon=mpv', '--getopenfilename', 'Subtitle Files (*.srt *.sub *.ass *.ssa *.mplsub *.txt)'},
+        args = {'kdialog', '--attach='..focus.stdout..'' , '--title=Select Subtitle', '--icon=mpv', '--geometry=750x450', '--getopenfilename', ''..directory..'' , 'Subtitle Files ('..sub_extensions..')'},
         cancellable = false,
     })
     
@@ -95,7 +99,7 @@ function add_sub_kdialog()
     end
 end
 
-mp.add_key_binding("Ctrl+f", "add-files-kdialog", add_files)
-mp.add_key_binding("Ctrl+Shift+f", "append-files-kdialog", append_files)
-mp.add_key_binding("Ctrl+u", "open-url-kdialog", open_url_kdialog)
-mp.add_key_binding("Ctrl+s", "add-subtitle-kdialog", add_sub_kdialog)
+mp.add_key_binding("Ctrl+o", "kdialog_add_files", add_files)
+mp.add_key_binding("Ctrl+Shift+o", "kdialog_append_files", append_files)
+mp.add_key_binding("Ctrl+u", "kdialog_open_url", open_url)
+mp.add_key_binding("Ctrl+s", "kdialog_add_subtitle", add_subtitle)
