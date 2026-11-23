@@ -1,17 +1,10 @@
 [
     {
         "title": "ModernX",
-        "git": "https://github.com/dexeonify/mpv-config",
+        "git": "https://github.com/zydezu/ModernX",
         "branch": "main",
         "whitelist": "modernx%.lua$",
         "dest": "~~/scripts"
-    },
-    {
-        "title": "Fonts for ModernX",
-        "git": "https://github.com/dexeonify/mpv-config",
-        "branch": "main",
-        "whitelist": "modernx-osc-icon%.ttf$",
-        "dest": "~~/fonts"
     },
     {
         "title": "thumbfast",
@@ -34,24 +27,6 @@
     {
         "title": "manager",
         "git": "https://github.com/po5/mpv_manager",
-        "whitelist": "%.lua$",
-        "dest": "~~/scripts"
-    },
-    {
-        "title": "quality-menu",
-        "git": "https://github.com/christoph-heinrich/mpv-quality-menu",
-        "whitelist": "quality%-menu%.lua$",
-        "dest": "~~/scripts"
-    },
-    {
-        "title": "scroll-list",
-        "git": "https://github.com/CogentRedTester/mpv-scroll-list",
-        "whitelist": "scroll%-list%.lua$",
-        "dest": "~~/script-modules"
-    },
-    {
-        "title": "persist-properties",
-        "git": "https://github.com/d87/mpv-persist-properties",
         "whitelist": "%.lua$",
         "dest": "~~/scripts"
     },
@@ -97,5 +72,26 @@
         "branch": "main",
         "whitelist": "amd%_fsr.*%.glsl$",
         "dest": "~~/shaders/"
+    },
+    {
+        "title": "Joint Bilateral",
+        "git": "https://github.com/Artoriuz/glsl-joint-bilateral",
+        "branch": "main",
+        "whitelist": "%.glsl$",
+        "dest": "~~/shaders/Artoriuz"
+    },
+    {
+        "title": "Pixel Clipper",
+        "git": "https://github.com/Artoriuz/glsl-pixel-clipper",
+        "branch": "main",
+        "whitelist": "%.glsl$",
+        "dest": "~~/shaders/Artoriuz"
+    },
+    {
+        "title": "Chroma from Luma (CfL) Prediction",
+        "git": "https://github.com/Artoriuz/glsl-chroma-from-luma-prediction",
+        "branch": "main",
+        "whitelist": "%.glsl$",
+        "dest": "~~/shaders/Artoriuz"
     }
 ]
